@@ -8,6 +8,7 @@ use App\Service\Exception\InvalidParameterException;
 use App\Service\Exception\InvalidOptionException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -20,6 +21,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class PrepareCommand extends Command
 {
+    use LockableTrait;
+
     protected BeveragePreparationService $beveragePreparationService;
 
     public function __construct(BeveragePreparationService $beveragePreparationService, string $name = null)
@@ -38,7 +41,12 @@ class PrepareCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+
         $io = new SymfonyStyle($input, $output);
+
+        if ($this->lock(null, true)) {
+            $io->warning("Please wait for the other orders to be finished");
+        }
 
         $id = $input->getArgument('id');
         $amount = $input->getArgument('amount');
@@ -51,6 +59,8 @@ class PrepareCommand extends Command
             if ($validOrder) {
                 $this->beveragePreparationService->prepare($id, $amount);
             }
+
+            $this->release();
         } catch (InvalidParameterException $e) {
             $io->error("Please review your selection: {$e->getMessage()}");
         } catch (InvalidOptionException $e) {
