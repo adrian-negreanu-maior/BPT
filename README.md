@@ -25,7 +25,7 @@ Se cere codul care va avea urmatorul output:
 4. Validarea disponibilitatii ingredientelor pentru preparare
 5. Cantitatile ramase dupa o comanda
 6. Calculul restului de plata
+7. Blocarea automatului la preluarea unei singure comenzi la un moment dat cu punerea in asteptare a comenzii urmatoare
 
 ## De implementat
 1. Automatul de preparare sa isi stocheze starea in baza de date
-2. Automatul sa ruleze intr-o bucla iar serviciul de preparare sa fie un Singleton
